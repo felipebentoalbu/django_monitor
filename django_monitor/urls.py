@@ -23,5 +23,5 @@ urlpatterns = [
     path('', include('module_monitor.urls')),
 ]
 
-t = threading.Thread(target=toMonitor)
-t.start()
+# t = threading.Thread(target=toMonitor)
+# t.start()
