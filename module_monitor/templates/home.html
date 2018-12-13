@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Servers</h1>
+    <ul>
+        {% for server in servers %}
+        <li> {{ server.host }} </li>
+        <li> {{ server.name }} </li>
+        <li> {{ server.is_online }} </li>
+        <li> {{ server.last_execution }} </li>
+        {% endfor %}
+    </ul>
+
+    <span>You have {{ servers|length }} servers.</span>
+</body>
+</html>
