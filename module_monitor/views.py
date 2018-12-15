@@ -9,7 +9,7 @@ import smtplib
 import requests
 
 
-def toMonitor(self):
+def toMonitor():
 
     servers = Monitor.objects.all()
     if not servers:
