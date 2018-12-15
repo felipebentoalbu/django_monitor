@@ -1,30 +1,25 @@
 from django.shortcuts import render
+from django.contrib.admin.views.decorators import staff_member_required
+
 from .models import Monitor
 
-from time import sleep
 from decouple import config
+
 import smtplib
 import requests
 
-from django.contrib.admin.views.decorators import staff_member_required
 
-def toMonitor():
+def toMonitor(self):
 
-    while True:
-        sleep(int(config("SLEEP_TIME")))
-        servers = Monitor.objects.all()
-        if not servers:
-            print("Sem serviços cadastrados para o monitoramento.")
-        else:
-            for server in servers:
-                r = requests.get(server.host)
-                print(str(r.status_code) + " - " + server.name + " - " + server.host)
-                if(server.status_code != str(r.status_code)):
-                    # atualizar info is_online
-                    obj_update = Monitor.objects.get(id=server.id)
-                    obj_update.is_online = False
-                    obj_update.save()
-                    send_email(server, r.status_code)
+    servers = Monitor.objects.all()
+    if not servers:
+        print("Sem serviços cadastrados para o monitoramento.")
+    else:
+        for server in servers:
+            r = requests.get(server.host)
+            print(str(r.status_code) + " - " + server.name + " - " + server.host)
+            if(server.status_code != str(r.status_code)):
+                send_email(server, r.status_code)
 
 def send_email(server, status_code):
     

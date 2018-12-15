@@ -15,13 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from module_monitor.views import toMonitor
-import threading
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('module_monitor.urls')),
 ]
 
-t = threading.Thread(target=toMonitor)
-t.start()
+# from module_monitor.views import toMonitor
+# from time import sleep
+# from decouple import config 
+# import threading
+
+# t = threading.Thread(target=toMonitor,args=("thread sendo executada",))
+# t.start()
+# while t.isAlive():
+#     print("Aguardando thread")
+#     sleep(int(config("SLEEP_TIME")))
