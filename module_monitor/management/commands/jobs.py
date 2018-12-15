@@ -1,20 +1,25 @@
 from django.core.management.base import BaseCommand
 from apscheduler.schedulers.background import BackgroundScheduler
 from decouple import config
+import threading
+from time import sleep
 import smtplib
 import requests
 from module_monitor.models import Monitor
 
 def toMonitor():
-    servers = Monitor.objects.all()
-    if not servers:
-        print("Sem serviços cadastrados para o monitoramento.")
-    else:
-        for server in servers:
-            r = requests.get(server.host)
-            print(str(r.status_code) + " - " + server.name + " - " + server.host)
-            if(server.status_code != str(r.status_code)):
-                send_email(server, r.status_code)  
+
+    while True:
+        sleep(int(config("SLEEP_TIME")))
+        servers = Monitor.objects.all()
+        if not servers:
+            print("Sem serviços cadastrados para o monitoramento.")
+        else:
+            for server in servers:
+                r = requests.get(server.host)
+                print(str(r.status_code) + " - " + server.name + " - " + server.host)
+                if(server.status_code != str(r.status_code)):
+                    send_email(server, r.status_code)  
 
 def send_email(server, status_code):
     
@@ -52,11 +57,12 @@ def send_email(server, status_code):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        return ""
+        t = threading.Thread(target=toMonitor)
+        t.start()
 
-    sched = BackgroundScheduler()
-    sched.add_job(toMonitor(), 'interval', minutes=1)
-    sched.start()
+    # sched = BackgroundScheduler()
+    # sched.add_job(toMonitor(), 'interval', minutes=1)
+    # sched.start()
 
-if __name__ == '__main__':
-    Command()
+# if __name__ == '__main__':
+#     Command()
