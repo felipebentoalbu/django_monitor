@@ -1,8 +1,8 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 
-sched = BackgroundScheduler()
+sched = BlockingScheduler()
 
-sched.add_job(timed_job, 'interval', minutes=1, id='my_job_id')
+@sched.scheduled_job('interval', minutes=1)
 def timed_job():
     print('This job is run every three minutes.')
 
