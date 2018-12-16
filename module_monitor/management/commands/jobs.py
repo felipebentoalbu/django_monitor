@@ -3,11 +3,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from decouple import config
 import threading
 from time import sleep
-import smtplib
 import requests
 from module_monitor.models import Monitor
 from datetime import datetime
 from django import db
+
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def toMonitor():
 
@@ -22,52 +25,47 @@ def toMonitor():
                 r = requests.get(server.host)
                 print(str(r.status_code) + " - " + server.name + " - " + server.host)
 
-                if server.status_code != str(r.status_code):
+                if server.status_code != str(r.status_code) and server.status:
                     if server.is_online == True:
                         send_email(server, r.status_code, False)
-                    Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code), is_online=False, last_trouble=datetime.now())
+                    # Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code), is_online=False, last_trouble=datetime.now())
                 else:
-                    if server.is_online == False:
+                    if server.is_online == False and server.status:
                         send_email(server, r.status_code, True)
                         Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code), is_online=True)
         db.connections.close_all()
 
-def send_email(server, status_code, is_online):
-    
-    TO = server.email
-    if(is_online):
+def send_email(server_info, status_code, is_online):
+
+    if is_online:
         text_is_online = "disponível novamente"
     else:
         text_is_online = "indisponível"
-    SUBJECT = '(' + str(status_code) + ')' + ' - servico esta ' + text_is_online + ' - ' + server.name
-    TEXT = 'Servico esta ' + text_is_online + '.\nName:{NAME} Host: {HOST}\nStatus code esperado: {STATUS_ORIGINAL}\nStatus code atual:{STATUS_CURRENT}'.format(
-        NAME=server.name,
-        HOST=server.host,
-        STATUS_ORIGINAL=server.status_code,
-        STATUS_CURRENT=status_code
+
+    gmailUser = config("SENDER_EMAIL")
+    gmailPassword = config("PASS_EMAIL")
+    recipient = server_info.email
+    message= 'Serviço está ' + text_is_online + '.\nName:{NAME} Host: {HOST}\nStatus code esperado: {STATUS_ORIGINAL}\nStatus code atual: {STATUS_CURRENT}\nData do problema: {LAST_TROUBLE}'.format(
+        NAME=server_info.name,
+        HOST=server_info.host,
+        STATUS_ORIGINAL=server_info.status_code,
+        STATUS_CURRENT=status_code,
+        LAST_TROUBLE=server_info.last_trouble
     )
 
-    # Gmail Sign In
-    gmail_sender = config("SENDER_EMAIL")
-    gmail_passwd = config("PASS_EMAIL")
+    msg = MIMEMultipart()
+    msg['From'] = gmailUser
+    msg['To'] = recipient
+    msg['Subject'] = '(' + str(status_code) + ' - ' + server_info.name + ')' + ' - Serviço está ' + text_is_online
+    msg.attach(MIMEText(message))
 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.ehlo()
-    server.starttls()
-    server.login(gmail_sender, gmail_passwd)
-
-    BODY = '\r\n'.join(['To: %s' % TO,
-                        'From: %s' % gmail_sender,
-                        'Subject: %s' % SUBJECT,
-                        '', TEXT])
-
-    try:
-        server.sendmail(gmail_sender, [TO], BODY)
-        print ('email sent')
-    except:
-        print ('error sending mail')
-
-    server.quit()
+    mailServer = smtplib.SMTP('smtp.gmail.com', 587)
+    mailServer.ehlo()
+    mailServer.starttls()
+    mailServer.ehlo()
+    mailServer.login(gmailUser, gmailPassword)
+    mailServer.sendmail(gmailUser, recipient, msg.as_string())
+    mailServer.close()
 
 class Command(BaseCommand):
 
