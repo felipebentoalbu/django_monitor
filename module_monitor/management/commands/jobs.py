@@ -22,6 +22,7 @@ def toMonitor():
             print("Sem serviços cadastrados para o monitoramento.")
         else:
             for server in servers:
+                sleep(int(config("SLEEP_TIME_REQ")))
                 r = requests.get(server.host)
                 print(str(r.status_code) + " - " + server.name + " - " + server.host)
 
