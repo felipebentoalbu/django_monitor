@@ -10,9 +10,12 @@
     <h1>Servers</h1>
     <ul>
         {% for server in servers %}
-        <li> {{ server.host }} </li>
-        <li> {{ server.name }} </li>
-        <li> {{ server.is_online }} </li>
+        <li><b>Host:</b> {{ server.host }} </li>
+        <li><b>Name:</b> {{ server.name }} </li>
+        <li><b>Está online:</b> {{ server.is_online }} </li>
+        <li><b>Status code esperado/atual:</b> {{ server.status_code }}/{{ server.current_status_code }} </li>
+        <li><b>Data do último problema:</b> {{ server.last_trouble }} </li>
+        <li>__________________________________________________</li>
         {% endfor %}
     </ul>
 
