@@ -1,2 +1,2 @@
 web: gunicorn django_monitor.wsgi --log-file -
-clock: python manage.py jobs --app tomonitor --loglevel=INFO
+clock: python manage.py jobs --app tomonitor
