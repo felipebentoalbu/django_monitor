@@ -49,7 +49,7 @@ def send_email(server_info, status_code, is_online):
     gmailUser = config("SENDER_EMAIL")
     gmailPassword = config("PASS_EMAIL")
     recipient = server_info.email
-    message= 'Serviço está ' + text_is_online + '.\nName: {NAME} Host: {HOST}\nStatus code esperado: {STATUS_ORIGINAL}\nStatus code atual: {STATUS_CURRENT}\nData do problema: {LAST_TROUBLE}'.format(
+    message= 'Serviço está ' + text_is_online + '.\nName: {NAME} Host: {HOST}\nStatus code esperado: {STATUS_ORIGINAL}\nStatus code atual: {STATUS_CURRENT}\nData do último problema: {LAST_TROUBLE}'.format(
         NAME=server_info.name,
         HOST=server_info.host,
         STATUS_ORIGINAL=server_info.status_code,
