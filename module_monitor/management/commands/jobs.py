@@ -10,6 +10,7 @@ from module_monitor.models import Monitor
 def toMonitor():
 
     while True:
+
         sleep(int(config("SLEEP_TIME")))
         servers = Monitor.objects.all()
         if not servers:
@@ -59,10 +60,3 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         t = threading.Thread(target=toMonitor)
         t.start()
-
-    # sched = BackgroundScheduler()
-    # sched.add_job(toMonitor(), 'interval', minutes=1)
-    # sched.start()
-
-# if __name__ == '__main__':
-#     Command()
