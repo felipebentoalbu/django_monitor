@@ -31,15 +31,17 @@ def toMonitor():
                 print("Monitoring... " + str(current_status_code) + " - " + server.name + " - " + server.host)
 
                 if server.status:
+                    # Envia e-mail caso sistema esteja online e recebe status code diferente ao aguardado
                     if server.status_code != current_status_code and server.is_online:
                         send_email(server, r.status_code, False)
                         Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=False, last_trouble=datetime.now())
-                    else:
-                        if server.status_code == current_status_code and server.is_online == False:
-                            send_email(server, r.status_code, True)
-                            Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=True)
-                        else:
-                            Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code))
+                    # Envia e-mail caso sistema esteja offline e recebe status code igual ao aguardado
+                    if server.status_code == current_status_code and server.is_online == False:
+                        send_email(server, r.status_code, True)
+                        Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=True)
+                    # Atualiza status code atual (current_status_code)
+                    if server.status_code != current_status_code and server.is_online == False:
+                        Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code))
         db.connections.close_all()
 
 def send_email(server_info, status_code, is_online):
