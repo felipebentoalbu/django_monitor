@@ -28,14 +28,13 @@ def toMonitor():
                     current_status_code = r.status_code
                 except:
                     current_status_code = 521
-                    send_email(server, current_status_code, False)
                 print("Monitoring... " + str(current_status_code) + " - " + server.name + " - " + server.host)
 
                 if server.status:
                     if server.status_code != current_status_code:
                         if server.is_online == True:
                             send_email(server, r.status_code, False)
-                        Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=False, last_trouble=datetime.now())
+                            Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=False, last_trouble=datetime.now())
                     else:
                         if server.is_online == False:
                             send_email(server, r.status_code, True)
