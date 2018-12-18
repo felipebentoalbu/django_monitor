@@ -39,9 +39,9 @@ def toMonitor():
                     else:
                         if server.is_online == False:
                             send_email(server, r.status_code, True)
-                            Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code), is_online=True)
-                        if server.current_status_code != str(r.status_code):
-                            Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code))
+                            Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code), is_online=True)
+                        if server.current_status_code != str(current_status_code):
+                            Monitor.objects.filter(id=server.id).update(current_status_code=str(current_status_code))
         db.connections.close_all()
 
 def send_email(server_info, status_code, is_online):
