@@ -29,7 +29,7 @@ def toMonitor():
                 except:
                     current_status_code = 521
                     send_email(server, current_status_code, False)
-                print(str(current_status_code) + " - " + server.name + " - " + server.host)
+                print("Monitoring... " + str(current_status_code) + " - " + server.name + " - " + server.host)
 
                 if server.status:
                     if server.status_code != current_status_code:
