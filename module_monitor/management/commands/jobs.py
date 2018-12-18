@@ -23,8 +23,14 @@ def toMonitor():
         else:
             for server in servers:
                 sleep(int(config("SLEEP_TIME_REQ")))
-                r = requests.get(server.host)
-                print(str(r.status_code) + " - " + server.name + " - " + server.host)
+                try:
+                    r = requests.get(server.host, timeout=30)
+                    current_status_code = r.status_code
+                except:
+                    current_status_code = 521
+                    send_email(server, current_status_code, False)
+                    Monitor.objects.filter(id=server.id).update(current_status_code=str(r.status_code), is_online=False, last_trouble=datetime.now())
+                print(str(current_status_code) + " - " + server.name + " - " + server.host)
 
                 if server.status:
                     if server.status_code != str(r.status_code):
