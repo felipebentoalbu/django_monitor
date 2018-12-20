@@ -18,6 +18,7 @@ def toMonitor():
 
         sleep(int(config("SLEEP_TIME")))
         servers = Monitor.objects.all()
+        print("******************************START_MONITORING******************************")
         if not servers:
             print("Sem serviços cadastrados para o monitoramento.")
         else:
@@ -42,6 +43,7 @@ def toMonitor():
                     # Atualiza status code atual (request_status_code)
                     if server.status_code != request_status_code and server.is_online == False:
                         Monitor.objects.filter(id=server.id).update(current_status_code=request_status_code)
+            print("******************************FINAL_MONITORING******************************")
         db.connections.close_all()
 
 def send_email(server_info, request_status_code, is_online):
