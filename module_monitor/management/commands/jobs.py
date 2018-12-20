@@ -38,11 +38,11 @@ def toMonitor():
                         send_email(server, request_status_code, False)
                         Monitor.objects.filter(id=server.id).update(current_status_code=request_status_code, is_online=False, last_trouble=datetime.now())
                     # Envia e-mail caso sistema esteja offline e recebe status code igual ao aguardado
-                    if server.status_code == request_status_code and server.is_online == False:
+                    elif server.status_code == request_status_code and server.is_online == False:
                         send_email(server, request_status_code, True)
                         Monitor.objects.filter(id=server.id).update(current_status_code=request_status_code, is_online=True)
                     # Atualiza status code atual (request_status_code)
-                    if server.status_code != request_status_code and server.is_online == False:
+                    else:
                         Monitor.objects.filter(id=server.id).update(current_status_code=request_status_code)
             print("******************************FINAL_MONITORING******************************")
         db.connections.close_all()
