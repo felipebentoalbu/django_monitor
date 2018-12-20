@@ -30,7 +30,8 @@ def toMonitor():
                 except:
                     request_status_code = str(521)
                 print("Monitoring... " + str(request_status_code) + " - " + server.name + " - " + server.host)
-
+                
+                Monitor.objects.filter(id=server.id).update(last_execution=datetime.now())
                 if server.status:
                     # Envia e-mail caso sistema esteja online e recebe status code diferente ao aguardado
                     if server.status_code != request_status_code and server.is_online:

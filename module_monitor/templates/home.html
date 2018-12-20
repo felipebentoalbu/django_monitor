@@ -4,22 +4,44 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Home</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Servers</h1>
-    <ul>
-        {% for server in servers %}
-        <li><b>Host:</b> {{ server.host }} </li>
-        <li><b>Name:</b> {{ server.name }} </li>
-        <li><b>Status atual:</b> {{ server.is_online|yesno:'Online,Offline' }} </li>
-        <li><b>Sendo monitorado:</b> {{ server.status|yesno:'Sim,Não' }} </li>
-        <li><b>Status code esperado/atual:</b> {{ server.status_code }}/{{ server.current_status_code }} </li>
-        <li><b>Data do último problema:</b> {{ server.last_trouble }} </li>
-        <li>__________________________________________________</li>
-        {% endfor %}
-    </ul>
-
-    <span>You have {{ servers|length }} servers.</span>
+    <div class="container">
+        <h2>Monitoring servers:</h2>
+        <p>You have {{ servers|length }} servers.</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Host</th>
+                    <th>Sendo monitorado?</th>
+                    <th>Status code atual</th>
+                    <th>Status code esperado</th>
+                    <th>Status atual</th>
+                    <th>Última verificação</th>
+                    <th>Último problema</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for server in servers %}
+                <tr>
+                    <td>{{ server.name }}</td>
+                    <td>{{ server.host }}</td>
+                    <td class="{{ server.status|yesno:'success,danger' }}">{{ server.status|yesno:'Sim,Não' }}</td>
+                    <td class="info">{{ server.current_status_code }}</td>
+                    <td>{{ server.status_code }}</td>
+                    <td class="{{ server.is_online|yesno:'success,danger' }}">{{ server.is_online|yesno:'Online,Offline' }}</td>
+                    <td>{{ server.last_execution }}</td>
+                    <td>{{ server.last_trouble }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
