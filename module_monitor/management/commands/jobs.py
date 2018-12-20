@@ -9,11 +9,15 @@ from datetime import datetime
 from django import db
 
 import smtplib
+import urllib3
+
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-def toMonitor():
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+def toMonitor():
+    
     while True:
 
         sleep(int(config("SLEEP_TIME")))
