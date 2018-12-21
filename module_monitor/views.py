@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models.functions import Length
 
 from .models import Monitor
 
