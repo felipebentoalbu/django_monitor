@@ -29,7 +29,7 @@ def toMonitor():
             for server in servers:
                 sleep(int(config("SLEEP_TIME_REQ")))
                 try:
-                    r = requests.get(server.host, timeout=30)
+                    r = requests.get(server.host, timeout=30, verify=False)
                     request_status_code =  str(r.status_code)
                 except:
                     request_status_code = str(521)
